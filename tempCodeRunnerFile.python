@@ -1,4 +1,16 @@
-num1 = int(input("Enter First Number: "))
-num2 = int(input("Enter Second Number: "))
-if(num2 > num1)
-print("Equal:", num2)
+name = input("Enter Student Name: ")
+obtained_marks = int(input("Enter Obtained Marks: "))
+total_marks =500
+percentage = (obtained_marks / total_marks) * 100
+if percentage >= 80:
+    print("Grade: A")A
+elif percentage >= 65:
+
+elif percentage >= 55:print("Grade: B")
+print("Grade:C")
+elif percentage >= 45:
+print("Grade:D")
+elif percentage >= 35:
+print("Grade: E")
+else :
+print("Grade: F")
