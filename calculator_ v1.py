@@ -12,3 +12,6 @@ print("Addition:", addition)
 print("Subtraction:", subtraction)
 print("Multiplication:", multiplication)
 print("Division:", division)
+marks = 40
+
+print(marks >= 50)

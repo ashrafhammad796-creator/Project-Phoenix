@@ -1,14 +1,13 @@
-age = int(input("Enter your age: "))
-
-if age >= 18:
-
-    salary = int(input("Enter your salary: "))
-
-    if salary >= 50000:
-        print("Loan Approved")
-
-    else:
-        print("Low Salary")
-
+secret_number=7
+attempts=0
+while True:
+  guess=int(input("enter a guess number:"))
+attempts += 1    
+if(guess==secret_number):
+      print("congratulation")
+      print("You guessed the number in attempts.",attempts)  
+      break  
 else:
-    print("Not Eligible")
+    print("wrong guess")
+
+       
