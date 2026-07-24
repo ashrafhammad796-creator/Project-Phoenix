@@ -19,7 +19,7 @@ elif operator== "*":
    result=multplication(a,b)
    print(result)
 else:
- def division(a,b):
+    def division(a,b):
         return a/b
-result=division(a,b)
-print(result)
+    result=division(a,b)
+    print(result)
