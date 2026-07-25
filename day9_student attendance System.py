@@ -1,3 +1,4 @@
+ #student attendance SystemError
 attendance = set()
 
 for i in range(5):
