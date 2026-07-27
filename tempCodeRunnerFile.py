@@ -1,9 +1,14 @@
-attendance = set()
+name= input("Enter your name: ")
+age= input("Enter your age: ")
+cgpa= input("Enter your cgpa: ")
+with open("myname.txt", "w") as file:
+    file.write(name)
+    file.write(age)
+    file.write(cgpa)
+with open("myname.txt", "a") as file:
+    file.write(name + "\n" )
+file.write(age + "\n")
+file.write(cgpa + "\n" )
 
-for i in range(5):
-    name = input("Enter student name: ")
-    attendance.add(name)
-
-print("====attendance====")
-for student in attendance:
-    print(student)
+with open("myname.txt", "r") as file:
+    print(file.read())
