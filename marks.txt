@@ -1,0 +1,3 @@
+Math = 95
+Physics = 88
+English = 90

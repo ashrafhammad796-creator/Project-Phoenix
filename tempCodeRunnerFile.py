@@ -1,16 +1,7 @@
-class Employee:
-    
-    def set_data(self, name, salary):
-        self.name = name
-        self.salary = salary
+file = open("Employee.txt","r")
 
-    def display(self):
-        print("NAME:", self.name)
-        print("SALARY:", self.salary)
+data = file.read()
 
+print(data)
 
-emp = Employee()
-
-emp.set_data("HAMMAD", 30000)
-
-emp.display()
+file.close()

@@ -1,0 +1,6 @@
+Employee: Hammad
+Salary : 50000
+Department : AI
+Employee : Ali
+Salary : 40000
+Depertment : python
