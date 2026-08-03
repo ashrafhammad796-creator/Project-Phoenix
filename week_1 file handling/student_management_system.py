@@ -11,7 +11,7 @@ def menu():
     print("5. Exit")
     print("============================")
 
-s
+
 while True:
 
     menu()

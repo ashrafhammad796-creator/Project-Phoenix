@@ -85,13 +85,19 @@ user.set_data("Hammad",50000)
 user.display()
 
 # employee data in oop
-class employee:
-    def set_data(self,name,salary):
-        self.name=name
-        self.salary=salary
-        def display(self):
-            print("NAME: ",self.name)
-            print("SALARY :",self.salary)
-            name=employe()
-            name.set_data("HAMMAD",30000)
-            name.display()
+class Employee:
+    
+    def set_data(self, name, salary):
+        self.name = name
+        self.salary = salary
+
+    def display(self):
+        print("NAME:", self.name)
+        print("SALARY:", self.salary)
+
+
+emp = Employee()
+
+emp.set_data("HAMMAD", 30000)
+
+emp.display()
