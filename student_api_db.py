@@ -1,7 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 import psycopg2
+from dotenv import load_dotenv
+import os
 
+# ==================================================
+# LOAD ENVIRONMENT VARIABLES
+# ==================================================
+
+load_dotenv()
 
 # ==================================================
 # FASTAPI APP
@@ -13,7 +20,6 @@ app = FastAPI(
     version="2.0"
 )
 
-
 # ==================================================
 # DATABASE CONNECTION
 # ==================================================
@@ -21,13 +27,12 @@ app = FastAPI(
 def get_connection():
 
     return psycopg2.connect(
-        host="localhost",
-        database="phoenix_db",
-        user="postgres",
-        password="1234",
-        port="5432"
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        port=os.getenv("DB_PORT")
     )
-
 
 # ==================================================
 # STUDENT MODEL
@@ -38,7 +43,6 @@ class Student(BaseModel):
     name: str = Field(..., min_length=2)
     age: int = Field(..., gt=0, le=100)
     course: str = Field(..., min_length=2)
-
 
 # ==================================================
 # STUDENT RESPONSE MODEL
@@ -51,7 +55,6 @@ class StudentResponse(BaseModel):
     age: int
     course: str
 
-
 # ==================================================
 # HOME
 # ==================================================
@@ -63,7 +66,6 @@ def home():
         "message": "Welcome to Project Phoenix AI",
         "status": "API is running"
     }
-
 
 # ==================================================
 # GET ALL STUDENTS
@@ -120,7 +122,6 @@ def get_students():
 
         if connection:
             connection.close()
-
 
 # ==================================================
 # GET STUDENT BY ID
@@ -184,7 +185,6 @@ def get_student(student_id: int):
         if connection:
             connection.close()
 
-
 # ==================================================
 # CREATE STUDENT
 # ==================================================
@@ -223,7 +223,12 @@ def create_student(student: Student):
 
         connection.commit()
 
-        return new_student
+        return {
+            "id": new_student[0],
+            "name": new_student[1],
+            "age": new_student[2],
+            "course": new_student[3]
+        }
 
     except Exception as e:
 
@@ -242,7 +247,6 @@ def create_student(student: Student):
 
         if connection:
             connection.close()
-
 
 # ==================================================
 # UPDATE STUDENT
@@ -297,7 +301,12 @@ def update_student(
 
         connection.commit()
 
-        return updated_student
+        return {
+            "id": updated_student[0],
+            "name": updated_student[1],
+            "age": updated_student[2],
+            "course": updated_student[3]
+        }
 
     except HTTPException:
 
@@ -320,7 +329,6 @@ def update_student(
 
         if connection:
             connection.close()
-
 
 # ==================================================
 # DELETE STUDENT
@@ -365,7 +373,12 @@ def delete_student(student_id: int):
 
         return {
             "message": "Student Deleted Successfully",
-            "student": deleted_student
+            "student": {
+                "id": deleted_student[0],
+                "name": deleted_student[1],
+                "age": deleted_student[2],
+                "course": deleted_student[3]
+            }
         }
 
     except HTTPException:
