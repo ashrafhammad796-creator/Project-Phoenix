@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel, Field
 import psycopg2
 from dotenv import load_dotenv
@@ -17,7 +17,7 @@ load_dotenv()
 app = FastAPI(
     title="Project Phoenix AI",
     description="Student Management API with PostgreSQL",
-    version="2.0"
+    version="2.1"
 )
 
 # ==================================================
@@ -26,13 +26,19 @@ app = FastAPI(
 
 def get_connection():
 
-    return psycopg2.connect(
+    connection = psycopg2.connect(
         host=os.getenv("DB_HOST"),
         database=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         port=os.getenv("DB_PORT")
     )
+
+    try:
+        yield connection
+
+    finally:
+        connection.close()
 
 # ==================================================
 # STUDENT MODEL
@@ -75,15 +81,13 @@ def home():
     "/students",
     response_model=list[StudentResponse]
 )
-def get_students():
+def get_students(
+    connection=Depends(get_connection)
+):
 
-    connection = None
-    cursor = None
+    cursor = connection.cursor()
 
     try:
-
-        connection = get_connection()
-        cursor = connection.cursor()
 
         cursor.execute(
             """
@@ -108,20 +112,9 @@ def get_students():
 
         return students
 
-    except Exception as e:
-
-        raise HTTPException(
-            status_code=500,
-            detail=f"Database Error: {str(e)}"
-        )
-
     finally:
 
-        if cursor:
-            cursor.close()
-
-        if connection:
-            connection.close()
+        cursor.close()
 
 # ==================================================
 # GET STUDENT BY ID
@@ -131,15 +124,14 @@ def get_students():
     "/student/{student_id}",
     response_model=StudentResponse
 )
-def get_student(student_id: int):
+def get_student(
+    student_id: int,
+    connection=Depends(get_connection)
+):
 
-    connection = None
-    cursor = None
+    cursor = connection.cursor()
 
     try:
-
-        connection = get_connection()
-        cursor = connection.cursor()
 
         cursor.execute(
             """
@@ -166,24 +158,9 @@ def get_student(student_id: int):
             "course": student[3]
         }
 
-    except HTTPException:
-
-        raise
-
-    except Exception as e:
-
-        raise HTTPException(
-            status_code=500,
-            detail=f"Database Error: {str(e)}"
-        )
-
     finally:
 
-        if cursor:
-            cursor.close()
-
-        if connection:
-            connection.close()
+        cursor.close()
 
 # ==================================================
 # CREATE STUDENT
@@ -194,15 +171,14 @@ def get_student(student_id: int):
     status_code=201,
     response_model=StudentResponse
 )
-def create_student(student: Student):
+def create_student(
+    student: Student,
+    connection=Depends(get_connection)
+):
 
-    connection = None
-    cursor = None
+    cursor = connection.cursor()
 
     try:
-
-        connection = get_connection()
-        cursor = connection.cursor()
 
         query = """
         INSERT INTO students (name, age, course)
@@ -232,8 +208,7 @@ def create_student(student: Student):
 
     except Exception as e:
 
-        if connection:
-            connection.rollback()
+        connection.rollback()
 
         raise HTTPException(
             status_code=500,
@@ -242,11 +217,7 @@ def create_student(student: Student):
 
     finally:
 
-        if cursor:
-            cursor.close()
-
-        if connection:
-            connection.close()
+        cursor.close()
 
 # ==================================================
 # UPDATE STUDENT
@@ -258,16 +229,13 @@ def create_student(student: Student):
 )
 def update_student(
     student_id: int,
-    student: Student
+    student: Student,
+    connection=Depends(get_connection)
 ):
 
-    connection = None
-    cursor = None
+    cursor = connection.cursor()
 
     try:
-
-        connection = get_connection()
-        cursor = connection.cursor()
 
         query = """
         UPDATE students
@@ -314,8 +282,7 @@ def update_student(
 
     except Exception as e:
 
-        if connection:
-            connection.rollback()
+        connection.rollback()
 
         raise HTTPException(
             status_code=500,
@@ -324,11 +291,7 @@ def update_student(
 
     finally:
 
-        if cursor:
-            cursor.close()
-
-        if connection:
-            connection.close()
+        cursor.close()
 
 # ==================================================
 # DELETE STUDENT
@@ -337,15 +300,14 @@ def update_student(
 @app.delete(
     "/student/{student_id}"
 )
-def delete_student(student_id: int):
+def delete_student(
+    student_id: int,
+    connection=Depends(get_connection)
+):
 
-    connection = None
-    cursor = None
+    cursor = connection.cursor()
 
     try:
-
-        connection = get_connection()
-        cursor = connection.cursor()
 
         query = """
         DELETE FROM students
@@ -387,8 +349,7 @@ def delete_student(student_id: int):
 
     except Exception as e:
 
-        if connection:
-            connection.rollback()
+        connection.rollback()
 
         raise HTTPException(
             status_code=500,
@@ -397,8 +358,4 @@ def delete_student(student_id: int):
 
     finally:
 
-        if cursor:
-            cursor.close()
-
-        if connection:
-            connection.close()
+        cursor.close()
